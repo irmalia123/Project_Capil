@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 30, 2025 at 05:15 PM
+-- Generation Time: Oct 30, 2025 at 08:15 PM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.1.25
+-- PHP Version: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -293,17 +293,24 @@ INSERT INTO `penerbitan_ktp` (`id`, `nik`, `nama`, `tempat_lahir`, `tanggal_lahi
 -- --------------------------------------------------------
 
 --
--- Table structure for table `pengajuan`
+-- Table structure for table `pengaduan`
 --
 
-CREATE TABLE `pengajuan` (
+CREATE TABLE `pengaduan` (
   `id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `nama_pemohon` varchar(100) NOT NULL,
-  `jenis_pengajuan` varchar(100) NOT NULL,
-  `status` enum('menunggu','diproses','disetujui','ditolak') DEFAULT 'menunggu',
-  `tanggal_pengajuan` timestamp NOT NULL DEFAULT current_timestamp(),
-  `keterangan` text DEFAULT NULL
+  `nomor_pengaduan` varchar(20) NOT NULL,
+  `nama_pelapor` varchar(100) NOT NULL,
+  `email_pelapor` varchar(100) DEFAULT NULL,
+  `telepon_pelapor` varchar(15) DEFAULT NULL,
+  `jenis_pengaduan` varchar(50) NOT NULL,
+  `subjek` varchar(200) NOT NULL,
+  `deskripsi` text NOT NULL,
+  `tanggal_pengaduan` datetime DEFAULT current_timestamp(),
+  `status` enum('menunggu','diproses','selesai','ditolak') DEFAULT 'menunggu',
+  `prioritas` enum('rendah','sedang','tinggi') DEFAULT 'sedang',
+  `lampiran` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -407,11 +414,11 @@ ALTER TABLE `penerbitan_ktp`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `pengajuan`
+-- Indexes for table `pengaduan`
 --
-ALTER TABLE `pengajuan`
+ALTER TABLE `pengaduan`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD UNIQUE KEY `nomor_pengaduan` (`nomor_pengaduan`);
 
 --
 -- Indexes for table `persyaratan`
@@ -473,9 +480,9 @@ ALTER TABLE `penerbitan_ktp`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
--- AUTO_INCREMENT for table `pengajuan`
+-- AUTO_INCREMENT for table `pengaduan`
 --
-ALTER TABLE `pengajuan`
+ALTER TABLE `pengaduan`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -495,16 +502,6 @@ ALTER TABLE `slider`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `pengajuan`
---
-ALTER TABLE `pengajuan`
-  ADD CONSTRAINT `pengajuan_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
