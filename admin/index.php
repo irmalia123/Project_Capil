@@ -127,55 +127,89 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
 
         /* Dashboard Stats Styles */
         .dashboard-stats {
-            display: flex; /* Mengatur statistik dengan flexbox */
-            justify-content: space-between; /* Jarak antar statistik */
-            margin-bottom: 20px; /* Jarak bawah statistik */
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
         .stat-card {
             background-color: white; /* Warna latar belakang kartu statistik */
-            border-radius: 8px; /* Sudut melengkung */
-            padding: 20px; /* Ruang di dalam kartu */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bayangan kartu */
-            flex: 1; /* Kartu mengambil ruang yang sama */
-            margin: 0 5px; /* Jarak horizontal antar kartu */
+            border-radius: 12px; /* Sudut melengkung */
+            padding: 25px; /* Ruang di dalam kartu */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Bayangan kartu */
             text-align: center; /* Pusatkan teks dalam kartu */
             transition: transform 0.3s, box-shadow 0.3s; /* Transisi untuk efek hover */
-            /* position: relative; Untuk menempatkan ikon */
+            border-left: 4px solid var(--primary-color);
         }
 
         .stat-card:hover {
             transform: translateY(-5px); /* Efek angkat saat hover */
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Bayangan lebih dalam saat hover */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15); /* Bayangan lebih dalam saat hover */
         }
 
         .stat-card h3 {
             margin-bottom: 10px; /* Jarak bawah judul */
-            color: #2980b9; /* Warna judul */
+            color: #4b5563; /* Warna judul */
+            font-size: 0.9rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .stat-card .number {
-            font-size: 2rem; /* Ukuran font untuk angka */
+            font-size: 2.5rem; /* Ukuran font untuk angka */
             font-weight: bold; /* Ketebalan font */
-            color: #27ae60; /* Warna angka */
+            color: var(--primary-color); /* Warna angka */
+            margin-bottom: 10px;
         }
 
         .stat-card .icon {
-            /* position: relative; Untuk penempatan ikon */
-            top: 5px; /* Jarak atas ikon */
-            right: 5px; /* Jarak kanan ikon */
             font-size: 2rem; /* Ukuran ikon */
             color: var(--accent-color); /* Warna ikon */
-            margin-left: 10px; /* Jarak kiri ikon */
+            margin-bottom: 10px;
+        }
+
+        /* Charts Container */
+        .charts-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .chart-box {
+            background-color: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .chart-box h2 {
+            margin-bottom: 20px;
+            color: var(--text-color);
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .chart-wrapper {
+            height: 300px;
+            position: relative;
         }
 
         /* Recent Activities Styles */
         .recent-activities {
             background-color: white; /* Warna latar belakang aktivitas terkini */
-            border-radius: 8px; /* Sudut melengkung */
-            padding: 20px; /* Ruang di dalam aktivitas terkini */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bayangan aktivitas terkini */
-            margin-top: 20px; /* Jarak atas aktivitas terkini */
+            border-radius: 12px; /* Sudut melengkung */
+            padding: 25px; /* Ruang di dalam aktivitas terkini */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Bayangan aktivitas terkini */
+        }
+
+        .recent-activities h2 {
+            margin-bottom: 20px;
+            color: var(--text-color);
+            font-size: 1.3rem;
+            font-weight: 600;
         }
 
         .activity-list {
@@ -185,8 +219,8 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
         .activity-item {
             display: flex; /* Mengatur item aktivitas dengan flexbox */
             align-items: center; /* Pusatkan secara vertikal */
-            padding: 10px 0; /* Ruang atas dan bawah item aktivitas */
-            border-bottom: 1px solid #eaeaea; /* Garis bawah item aktivitas */
+            padding: 15px 0; /* Ruang atas dan bawah item aktivitas */
+            border-bottom: 1px solid #e5e7eb; /* Garis bawah item aktivitas */
             transition: background-color 0.2s; /* Transisi untuk efek hover */
         }
 
@@ -195,21 +229,13 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
         }
 
         .activity-item:hover {
-            background-color: #f1f1f1; /* Warna latar belakang saat hover */
+            background-color: #f8fafc; /* Warna latar belakang saat hover */
         }
 
         .activity-icon {
-            margin-right: 10px; /* Jarak kanan ikon aktivitas */
-            color: #3498db; /* Warna ikon aktivitas */
-        }
-
-        /* Chart Styles */
-        .chart-container {
-            background-color: white; /* Warna latar belakang untuk grafik */
-            border-radius: 8px; /* Sudut melengkung */
-            padding: 20px; /* Ruang di dalam grafik */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Bayangan grafik */
-            margin-top: 20px; /* Jarak atas grafik */
+            margin-right: 15px; /* Jarak kanan ikon aktivitas */
+            color: var(--primary-color); /* Warna ikon aktivitas */
+            font-size: 1.2rem;
         }
 
         /* Footer Styles */
@@ -217,30 +243,23 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
             background-color: #2563eb; /* Warna latar belakang footer */
             color: #ecf0f1; /* Warna teks footer */
             text-align: center; /* Pusatkan teks dalam footer */
-            padding: 10px 0; /* Ruang di dalam footer */
-            position: relative; /* Posisi footer */
-            bottom: 0; /* Menempel di bagian bawah */
-            width: 100%; /* Lebar penuh */
-            margin-top: 80px; /* Jarak atas footer */
-            margin-left: 300px; /* Jarak kiri footer */
-            max-width: 1200px; /* Lebar maksimum footer */
+            padding: 15px 0; /* Ruang di dalam footer */
+            margin-top: 40px; /* Jarak atas footer */
+            margin-left: 280px; /* Jarak kiri footer */
+            border-radius: 8px;
         }
 
         .footer-content {
             margin: 0 auto; /* Pusatkan konten footer */
         }
 
-        .footer-links a {
-            color: #ecf0f1; /* Warna tautan footer */
-            margin: 0 10px; /* Jarak horizontal antar tautan */
-            text-decoration: none; /* Menghilangkan garis bawah */
-        }
-
-        .footer-links a:hover {
-            text-decoration: underline; /* Garis bawah saat hover */
-        }
-
         /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%; /* Lebar penuh pada perangkat kecil */
@@ -253,11 +272,11 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
             }
 
             .dashboard-stats {
-                flex-direction: column; /* Mengubah arah statistik menjadi kolom */
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             }
 
-            .stat-card {
-                margin: 10px 0; /* Jarak vertikal antar kartu statistik */
+            footer {
+                margin-left: 0;
             }
         }
     </style>
@@ -304,23 +323,23 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
         
         <!-- TOTAL PENDUDUK -->
         <div class="stat-card">
-            <h3>Total Penduduk</h3>
-            <div class="number"><?php echo $total_data['total']; ?></div>
             <i class="fas fa-users icon"></i>
+            <div class="number"><?php echo number_format($total_data['total']); ?></div>
+            <h3>Total Penduduk</h3>
         </div>
         
         <!-- PENDUDUK LAKI LAKI -->
         <div class="stat-card">
-            <h3>Penduduk Laki-laki</h3>
-            <div class="number"><?php echo $male_data['total']; ?></div>
             <i class="fas fa-male icon"></i>
+            <div class="number"><?php echo number_format($male_data['total']); ?></div>
+            <h3>Penduduk Laki-laki</h3>
         </div>
         
         <!-- PENDUDUK PEREMPUAN -->
         <div class="stat-card">
-            <h3>Penduduk Perempuan</h3>
-            <div class="number"><?php echo $female_data['total']; ?></div>
             <i class="fas fa-female icon"></i>
+            <div class="number"><?php echo number_format($female_data['total']); ?></div>
+            <h3>Penduduk Perempuan</h3>
         </div>
 
         <!-- Statistik untuk Akta Kelahiran -->
@@ -330,9 +349,9 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
         $akta_kelahiran_data = mysqli_fetch_assoc($akta_kelahiran_result);
         ?>
         <div class="stat-card">
-            <h3>Akta Kelahiran</h3>
-            <div class="number"><?php echo $akta_kelahiran_data['total']; ?></div>
             <i class="fas fa-baby icon"></i>
+            <div class="number"><?php echo number_format($akta_kelahiran_data['total']); ?></div>
+            <h3>Akta Kelahiran</h3>
         </div>
 
         <!-- Statistik untuk Pencatatan Perceraian -->
@@ -342,9 +361,9 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
         $perceraian_data = mysqli_fetch_assoc($perceraian_result);
         ?>
         <div class="stat-card">
-            <h3>Pencatatan Perceraian</h3>
-            <div class="number"><?php echo $perceraian_data['total']; ?></div>
             <i class="fas fa-user-slash icon"></i>
+            <div class="number"><?php echo number_format($perceraian_data['total']); ?></div>
+            <h3>Pencatatan Perceraian</h3>
         </div>
 
         <!-- Statistik untuk Pencatatan Perkawinan -->
@@ -354,9 +373,9 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
         $perkawinan_data = mysqli_fetch_assoc($perkawinan_result);
         ?>
         <div class="stat-card">
-            <h3>Pencatatan Perkawinan</h3>
-            <div class="number"><?php echo $perkawinan_data['total']; ?></div>
             <i class="fas fa-ring icon"></i>
+            <div class="number"><?php echo number_format($perkawinan_data['total']); ?></div>
+            <h3>Pencatatan Perkawinan</h3>
         </div>
 
         <!-- Statistik untuk Penerbitan KK -->
@@ -366,9 +385,9 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
         $kk_data = mysqli_fetch_assoc($kk_result);
         ?>
         <div class="stat-card">
-            <h3>Penerbitan KK</h3>
-            <div class="number"><?php echo $kk_data['total']; ?></div>
             <i class="fas fa-id-card icon"></i>
+            <div class="number"><?php echo number_format($kk_data['total']); ?></div>
+            <h3>Penerbitan KK</h3>
         </div>
 
         <!-- Statistik untuk Penerbitan KTP -->
@@ -378,16 +397,29 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
         $ktp_data = mysqli_fetch_assoc($ktp_result);
         ?>
         <div class="stat-card">
-            <h3>Penerbitan KTP</h3>
-            <div class="number"><?php echo $ktp_data['total']; ?></div>
             <i class="fas fa-address-card icon"></i>
+            <div class="number"><?php echo number_format($ktp_data['total']); ?></div>
+            <h3>Penerbitan KTP</h3>
         </div>
     </div>
 
     <!-- Grafik Statistik -->
-    <div class="chart-container">
-        <h2>Statistik Data Penduduk</h2>
-        <canvas id="dataChart"></canvas>
+    <div class="charts-container">
+        <!-- Grafik Utama -->
+        <div class="chart-box">
+            <h2>Statistik Data Kependudukan</h2>
+            <div class="chart-wrapper">
+                <canvas id="mainChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Grafik Pie -->
+        <div class="chart-box">
+            <h2>Distribusi Jenis Kelamin</h2>
+            <div class="chart-wrapper">
+                <canvas id="genderChart"></canvas>
+            </div>
+        </div>
     </div>
 
     <!-- AKTIVITAS TERKINI -->
@@ -423,7 +455,7 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
 </footer>
 
 <script>
-    // Ambil data untuk grafik
+    // Data untuk grafik
     const totalPenduduk = <?php echo $total_data['total']; ?>;
     const totalLakiLaki = <?php echo $male_data['total']; ?>;
     const totalPerempuan = <?php echo $female_data['total']; ?>;
@@ -433,46 +465,139 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
     const totalKK = <?php echo $kk_data['total']; ?>;
     const totalKTP = <?php echo $ktp_data['total']; ?>;
 
-    const ctx = document.getElementById('dataChart').getContext('2d');
-    const dataChart = new Chart(ctx, {
-        type: 'bar', // Jenis grafik
+    // Grafik Utama (Bar Chart)
+    const mainCtx = document.getElementById('mainChart').getContext('2d');
+    const mainChart = new Chart(mainCtx, {
+        type: 'bar',
         data: {
-            labels: ['Total Penduduk', 'Laki-laki', 'Perempuan', 'Akta Kelahiran', 'Perceraian', 'Perkawinan', 'Penerbitan KK', 'Penerbitan KTP'],
+            labels: ['Akta Kelahiran', 'Perceraian', 'Perkawinan', 'Penerbitan KK', 'Penerbitan KTP'],
             datasets: [{
-                label: 'Jumlah', // Label untuk dataset
-                data: [totalPenduduk, totalLakiLaki, totalPerempuan, totalAktaKelahiran, totalPerceraian, totalPerkawinan, totalKK, totalKTP],
+                label: 'Jumlah Dokumen',
+                data: [totalAktaKelahiran, totalPerceraian, totalPerkawinan, totalKK, totalKTP],
                 backgroundColor: [
-                    'rgba(54, 162, 235, 0.6)',
-                    'rgba(255, 99, 132, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(153, 102, 255, 0.6)',
-                    'rgba(255, 159, 64, 0.6)',
-                    'rgba(255, 206, 86, 0.6)',
-                    'rgba(75, 192, 192, 0.6)',
-                    'rgba(255, 99, 132, 0.6)'
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(239, 68, 68, 0.8)',
+                    'rgba(16, 185, 129, 0.8)',
+                    'rgba(245, 158, 11, 0.8)',
+                    'rgba(139, 92, 246, 0.8)'
                 ],
                 borderColor: [
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(255, 99, 132, 1)'
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(239, 68, 68, 1)',
+                    'rgba(16, 185, 129, 1)',
+                    'rgba(245, 158, 11, 1)',
+                    'rgba(139, 92, 246, 1)'
                 ],
-                borderWidth: 1 // Ketebalan garis batas
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
             }]
         },
         options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: 'white',
+                    bodyColor: 'white',
+                    borderColor: 'rgba(255, 255, 255, 0.2)',
+                    borderWidth: 1
+                }
+            },
             scales: {
                 y: {
-                    beginAtZero: true // Memulai sumbu Y dari nol
+                    beginAtZero: true,
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.1)'
+                    },
+                    ticks: {
+                        color: '#6b7280'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        color: '#6b7280'
+                    }
                 }
             }
         }
     });
+
+    // Grafik Pie (Jenis Kelamin)
+    const genderCtx = document.getElementById('genderChart').getContext('2d');
+    const genderChart = new Chart(genderCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Laki-laki', 'Perempuan'],
+            datasets: [{
+                data: [totalLakiLaki, totalPerempuan],
+                backgroundColor: [
+                    'rgba(59, 130, 246, 0.8)',
+                    'rgba(236, 72, 153, 0.8)'
+                ],
+                borderColor: [
+                    'rgba(59, 130, 246, 1)',
+                    'rgba(236, 72, 153, 1)'
+                ],
+                borderWidth: 2,
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        color: '#6b7280',
+                        font: {
+                            size: 12
+                        },
+                        padding: 20
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    titleColor: 'white',
+                    bodyColor: 'white'
+                }
+            },
+            cutout: '60%'
+        }
+    });
+
+    // Animasi untuk stat cards
+    document.addEventListener('DOMContentLoaded', function() {
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.classList.add('fade-in');
+        });
+    });
 </script>
+
+<style>
+    .fade-in {
+        animation: fadeInUp 0.6s ease-out forwards;
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
 
 </body>
 </html>

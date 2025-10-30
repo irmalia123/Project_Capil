@@ -1,0 +1,1266 @@
+<?php
+session_start();
+
+$host = "localhost";
+$username = "root";
+$password = "";
+$dbname = "siak_parepare";
+
+// Membuat koneksi ke database
+$conn = new mysqli($host, $username, $password, $dbname);
+
+// Cek koneksi
+if ($conn->connect_error) {
+    $database_connected = false;
+    $database_error = $conn->connect_error;
+} else {
+    $database_connected = true;
+    $database_error = "";
+}
+
+// Process form submission
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Generate nomor pengaduan otomatis
+    $nomor_pengaduan = 'PGD-' . date('Ymd') . '-' . rand(1000, 9999);
+    
+    $nama_pelapor = mysqli_real_escape_string($conn, $_POST['nama_pelapor']);
+    $email_pelapor = mysqli_real_escape_string($conn, $_POST['email_pelapor']);
+    $telepon_pelapor = mysqli_real_escape_string($conn, $_POST['telepon_pelapor']);
+    $jenis_pengaduan = mysqli_real_escape_string($conn, $_POST['jenis_pengaduan']);
+    $subjek = mysqli_real_escape_string($conn, $_POST['subjek']);
+    $deskripsi = mysqli_real_escape_string($conn, $_POST['deskripsi']);
+    $prioritas = mysqli_real_escape_string($conn, $_POST['prioritas']);
+
+    // Data tambahan berdasarkan jenis pengajuan
+    $data_tambahan = [];
+    
+    // Kumpulkan data tambahan berdasarkan jenis pengajuan
+    if ($jenis_pengaduan == 'AKTA KEMATIAN') {
+        $data_tambahan = [
+            // Data Pelapor
+            'nama_pelapor_akta' => mysqli_real_escape_string($conn, $_POST['nama_pelapor_akta']),
+            'nik_pelapor' => mysqli_real_escape_string($conn, $_POST['nik_pelapor']),
+            'no_dokper_pelapor' => mysqli_real_escape_string($conn, $_POST['no_dokper_pelapor']),
+            'no_kk_pelapor' => mysqli_real_escape_string($conn, $_POST['no_kk_pelapor']),
+            'kewarganegaraan_pelapor' => mysqli_real_escape_string($conn, $_POST['kewarganegaraan_pelapor']),
+            
+            // Data Saksi I
+            'nama_saksi1' => mysqli_real_escape_string($conn, $_POST['nama_saksi1']),
+            'nik_saksi1' => mysqli_real_escape_string($conn, $_POST['nik_saksi1']),
+            'no_kk_saksi1' => mysqli_real_escape_string($conn, $_POST['no_kk_saksi1']),
+            'kewarganegaraan_saksi1' => mysqli_real_escape_string($conn, $_POST['kewarganegaraan_saksi1']),
+            
+            // Data Saksi II
+            'nama_saksi2' => mysqli_real_escape_string($conn, $_POST['nama_saksi2']),
+            'nik_saksi2' => mysqli_real_escape_string($conn, $_POST['nik_saksi2']),
+            'no_kk_saksi2' => mysqli_real_escape_string($conn, $_POST['no_kk_saksi2']),
+            'kewarganegaraan_saksi2' => mysqli_real_escape_string($conn, $_POST['kewarganegaraan_saksi2']),
+            
+            // Data Orang Tua
+            'nama_ayah' => mysqli_real_escape_string($conn, $_POST['nama_ayah']),
+            'nik_ayah' => mysqli_real_escape_string($conn, $_POST['nik_ayah']),
+            'tempat_lahir_ayah' => mysqli_real_escape_string($conn, $_POST['tempat_lahir_ayah']),
+            'tanggal_lahir_ayah' => mysqli_real_escape_string($conn, $_POST['tanggal_lahir_ayah']),
+            'kewarganegaraan_ayah' => mysqli_real_escape_string($conn, $_POST['kewarganegaraan_ayah']),
+            'nama_ibu' => mysqli_real_escape_string($conn, $_POST['nama_ibu']),
+            'nik_ibu' => mysqli_real_escape_string($conn, $_POST['nik_ibu']),
+            'tempat_lahir_ibu' => mysqli_real_escape_string($conn, $_POST['tempat_lahir_ibu']),
+            'tanggal_lahir_ibu' => mysqli_real_escape_string($conn, $_POST['tanggal_lahir_ibu']),
+            'kewarganegaraan_ibu' => mysqli_real_escape_string($conn, $_POST['kewarganegaraan_ibu']),
+            
+            // Data Kematian
+            'nik_alm' => mysqli_real_escape_string($conn, $_POST['nik_alm']),
+            'nama_alm' => mysqli_real_escape_string($conn, $_POST['nama_alm']),
+            'tanggal_kematian' => mysqli_real_escape_string($conn, $_POST['tanggal_kematian']),
+            'pukul_kematian' => mysqli_real_escape_string($conn, $_POST['pukul_kematian']),
+            'sebab_kematian' => mysqli_real_escape_string($conn, $_POST['sebab_kematian']),
+            'tempat_kematian' => mysqli_real_escape_string($conn, $_POST['tempat_kematian']),
+            'yang_menerangkan' => mysqli_real_escape_string($conn, $_POST['yang_menerangkan'])
+        ];
+    } elseif ($jenis_pengaduan == 'AKTA LAHIR') {
+        $data_tambahan = [
+        'nama_bayi' => mysqli_real_escape_string($conn, $_POST['nama_bayi']),
+        'jenis_kelamin_bayi' => mysqli_real_escape_string($conn, $_POST['jenis_kelamin_bayi']),
+        'tempat_lahir_bayi' => mysqli_real_escape_string($conn, $_POST['tempat_lahir_bayi']),
+        'tanggal_lahir_bayi' => mysqli_real_escape_string($conn, $_POST['tanggal_lahir_bayi']),
+        'waktu_lahir_bayi' => mysqli_real_escape_string($conn, $_POST['waktu_lahir_bayi']),
+        'berat_bayi' => mysqli_real_escape_string($conn, $_POST['berat_bayi']),
+        'panjang_bayi' => mysqli_real_escape_string($conn, $_POST['panjang_bayi']),
+        'anak_ke' => mysqli_real_escape_string($conn, $_POST['anak_ke']),
+        'nama_ayah' => mysqli_real_escape_string($conn, $_POST['nama_ayah_aktalahir']),
+        'nik_ayah' => mysqli_real_escape_string($conn, $_POST['nik_ayah_aktalahir']),
+        'nama_ibu' => mysqli_real_escape_string($conn, $_POST['nama_ibu_aktalahir']),
+        'nik_ibu' => mysqli_real_escape_string($conn, $_POST['nik_ibu_aktalahir']),
+        // Data Saksi I - DITAMBAHKAN
+        'nama_saksi1_aktalahir' => mysqli_real_escape_string($conn, $_POST['nama_saksi1_aktalahir']),
+        'nik_saksi1_aktalahir' => mysqli_real_escape_string($conn, $_POST['nik_saksi1_aktalahir']),
+        'no_kk_saksi1_aktalahir' => mysqli_real_escape_string($conn, $_POST['no_kk_saksi1_aktalahir']),
+        'kewarganegaraan_saksi1_aktalahir' => mysqli_real_escape_string($conn, $_POST['kewarganegaraan_saksi1_aktalahir']),
+        // Data Saksi II - DITAMBAHKAN
+        'nama_saksi2_aktalahir' => mysqli_real_escape_string($conn, $_POST['nama_saksi2_aktalahir']),
+        'nik_saksi2_aktalahir' => mysqli_real_escape_string($conn, $_POST['nik_saksi2_aktalahir']),
+        'no_kk_saksi2_aktalahir' => mysqli_real_escape_string($conn, $_POST['no_kk_saksi2_aktalahir']),
+        'kewarganegaraan_saksi2_aktalahir' => mysqli_real_escape_string($conn, $_POST['kewarganegaraan_saksi2_aktalahir'])
+    ];
+    } elseif ($jenis_pengaduan == 'KARTU TANDA PENGENAL') {
+        $data_tambahan = [
+            'tempat_lahir' => mysqli_real_escape_string($conn, $_POST['tempat_lahir']),
+            'tanggal_lahir' => mysqli_real_escape_string($conn, $_POST['tanggal_lahir']),
+            'jenis_kelamin' => mysqli_real_escape_string($conn, $_POST['jenis_kelamin']),
+            'agama' => mysqli_real_escape_string($conn, $_POST['agama']),
+            'status_perkawinan' => mysqli_real_escape_string($conn, $_POST['status_perkawinan']),
+            'pekerjaan' => mysqli_real_escape_string($conn, $_POST['pekerjaan']),
+            'alamat_sekarang' => mysqli_real_escape_string($conn, $_POST['alamat_sekarang'])
+        ];
+    } elseif ($jenis_pengaduan == 'KARTU KELUARGA') {
+        $data_tambahan = [
+            'alamat_keluarga' => mysqli_real_escape_string($conn, $_POST['alamat_keluarga']),
+            'rt_rw' => mysqli_real_escape_string($conn, $_POST['rt_rw']),
+            'kelurahan_desa' => mysqli_real_escape_string($conn, $_POST['kelurahan_desa']),
+            'kecamatan' => mysqli_real_escape_string($conn, $_POST['kecamatan']),
+            'kode_pos' => mysqli_real_escape_string($conn, $_POST['kode_pos'])
+        ];
+    } elseif ($jenis_pengaduan == 'SURAT KETERANGAN PINDAH WARGA NEGARA INDONESIA') {
+        $data_tambahan = [
+            'alamat_tujuan' => mysqli_real_escape_string($conn, $_POST['alamat_tujuan']),
+            'alasan_pindah' => mysqli_real_escape_string($conn, $_POST['alasan_pindah']),
+            'jumlah_keluarga_pindah' => mysqli_real_escape_string($conn, $_POST['jumlah_keluarga_pindah']),
+            'tanggal_pindah' => mysqli_real_escape_string($conn, $_POST['tanggal_pindah'])
+        ];
+    }
+    
+    // Convert data tambahan ke JSON untuk disimpan
+    $data_tambahan_json = json_encode($data_tambahan);
+
+    // Handle file upload
+    $lampiran = '';
+    if (isset($_FILES['lampiran']) && $_FILES['lampiran']['error'] == 0) {
+        $upload_dir = 'uploads/';
+        if (!is_dir($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+        
+        $file_name = time() . '_' . basename($_FILES['lampiran']['name']);
+        $target_path = $upload_dir . $file_name;
+        
+        // Validasi tipe file
+        $allowed_types = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+        $file_type = $_FILES['lampiran']['type'];
+        
+        if (in_array($file_type, $allowed_types)) {
+            if (move_uploaded_file($_FILES['lampiran']['tmp_name'], $target_path)) {
+                $lampiran = $file_name;
+            }
+        }
+    }
+
+    // Insert pengaduan
+    $query = "INSERT INTO pengaduan (nomor_pengaduan, nama_pelapor, email_pelapor, telepon_pelapor, jenis_pengaduan, subjek, deskripsi, prioritas, lampiran, data_tambahan) 
+              VALUES ('$nomor_pengaduan', '$nama_pelapor', '$email_pelapor', '$telepon_pelapor', '$jenis_pengaduan', '$subjek', '$deskripsi', '$prioritas', '$lampiran', '$data_tambahan_json')";
+
+    if (mysqli_query($conn, $query)) {
+        $_SESSION['success'] = "Pengaduan berhasil dikirim! Nomor Pengaduan: " . $nomor_pengaduan;
+        header("Location: buat_pengaduan.php");
+        exit;
+    } else {
+        $error = "Gagal mengirim pengaduan: " . mysqli_error($conn);
+    }
+}
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buat Pengaduan - Disdukcapil Parepare</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Reset CSS */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --text-color: #2c3e50;
+            --light-bg: #ecf0f1;
+            --white: #ffffff;
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Header Styles */
+        .header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--white);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-menu a {
+            color: var(--white);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: var(--transition);
+        }
+
+        .nav-menu a:hover {
+            background-color: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .nav-menu a.active {
+            background-color: var(--accent-color);
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--white);
+            transition: var(--transition);
+        }
+
+        /* Form Container */
+        .form-hero {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            color: var(--white);
+            padding: 80px 0 40px;
+            text-align: center;
+        }
+
+        .form-container {
+            max-width: 1000px;
+            margin: -50px auto 50px;
+            background: var(--white);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 40px;
+            position: relative;
+        }
+
+        .required::after {
+            content: " *";
+            color: red;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .form-section {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            background: #fafafa;
+        }
+
+        .section-title {
+            background-color: var(--primary-color);
+            color: var(--white);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: -25px -25px 20px -25px;
+        }
+
+        .additional-form {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary-color);
+            color: var(--white);
+            padding: 3rem 0 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-section a {
+            color: var(--light-bg);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-section a:hover {
+            color: var(--secondary-color);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 0 1rem;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                flex-direction: column;
+                background-color: var(--primary-color);
+                width: 100%;
+                text-align: center;
+                transition: var(--transition);
+                box-shadow: 0 10px 27px rgba(0,0,0,0.05);
+                padding: 2rem 0;
+                gap: 0;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .nav-menu li {
+                margin: 15px 0;
+            }
+
+            .form-container {
+                margin: -30px 20px 30px;
+                padding: 25px;
+            }
+
+            .form-hero {
+                padding: 60px 0 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="nav-container">
+            <div class="logo">
+                <img src="img/pare.png" width="50" alt="Logo Parepare">
+                <i class="fas fa-landmark"></i>
+                <span>DISDUKCAPIL Parepare</span>
+            </div>
+            
+            <div class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+            <nav>
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="index.php">HOME</a></li>
+                    <li><a href="buat_pengaduan.php" class="active">BUAT PENGADUAN</a></li>
+                    <li><a href="auth/login.php">LOGIN ADMIN</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Form Hero Section -->
+    <section class="form-hero">
+        <div class="container">
+            <h1><i class="fas fa-headset me-3"></i>Buat Pengaduan</h1>
+            <p class="lead">Sampaikan pengaduan Anda dengan mudah dan cepat</p>
+        </div>
+    </section>
+
+    <!-- Form Section -->
+    <div class="container">
+        <div class="form-container">
+            <?php if(isset($error)): ?>
+            <div class="alert alert-danger"><?php echo $error; ?></div>
+            <?php endif; ?>
+
+            <?php if(isset($_SESSION['success'])): ?>
+            <div class="alert alert-success">
+                <h5><i class="fas fa-check-circle me-2"></i>Berhasil!</h5>
+                <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
+                <hr>
+                <small>Simpan nomor pengaduan Anda untuk melakukan pengecekan status.</small>
+            </div>
+            <?php endif; ?>
+
+            <div class="info-box">
+                <h6><i class="fas fa-info-circle me-2"></i>Informasi Penting</h6>
+                <small class="text-muted">
+                    • Pengaduan akan diproses dalam 1-3 hari kerja<br>
+                    • Pastikan data yang diisi benar dan lengkap<br>
+                    • File lampiran maksimal 2MB (PDF, JPG, PNG)<br>
+                    • Anda akan mendapat notifikasi via Whatsapp <br>
+                 <b>   • Untuk pembuatan KTP, pemohon wajib melakukan perekaman data secara langsung di kantor Disdukcapil  </b>
+                </small>
+            </div>
+
+            <form method="POST" enctype="multipart/form-data" id="pengaduanForm">
+                <!-- Data Pelapor -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <h5 class="mb-0"><i class="fas fa-user me-2"></i>Data Pelapor</h5>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Nama Lengkap</label>
+                            <input type="text" name="nama_pelapor" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Email</label>
+                            <input type="email" name="email_pelapor" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Nomor Telepon/WhatsApp</label>
+                            <input type="tel" name="telepon_pelapor" class="form-control" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Prioritas</label>
+                            <select name="prioritas" class="form-select">
+                                <option value="sedang">Sedang</option>
+                                <option value="tinggi">Tinggi</option>
+                                <option value="rendah">Rendah</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Data Pengaduan -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <h5 class="mb-0"><i class="fas fa-clipboard-list me-2"></i>Data Pengaduan</h5>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label required">Jenis Pengaduan</label>
+                            <select name="jenis_pengaduan" class="form-select" id="jenis_pengaduan" required onchange="showAdditionalForm()">
+                                <option value="">Pilih Jenis Pengaduan</option>
+                                <option value="KARTU KELUARGA">KARTU KELUARGA</option>
+                                <option value="KARTU TANDA PENGENAL">KARTU TANDA PENGENAL</option>
+                                <option value="AKTA LAHIR">AKTA LAHIR</option>
+                                <option value="KARTU IDENTITAS ANAK">KARTU IDENTITAS ANAK</option>    
+                                <option value="AKTA KEMATIAN">AKTA KEMATIAN</option>
+                                <option value="SURAT KETERANGAN PINDAH WARGA NEGARA INDONESIA">SURAT KETERANGAN PINDAH WARGA NEGARA INDONESIA</option>
+                            </select>
+                        </div>
+            
+                    </div>
+                  
+                </div>
+
+                <!-- Form Tambahan Berdasarkan Jenis Pengaduan -->
+                <div id="additionalFormContainer">
+                    <!-- Form tambahan akan muncul di sini berdasarkan pilihan -->
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="index.php" class="btn btn-outline-secondary me-md-2">
+                        <i class="fas fa-arrow-left me-2"></i>Kembali
+                    </a>
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-paper-plane me-2"></i>Kirim Pengaduan
+                    </button>
+                </div>
+
+
+
+                
+            </form>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Kontak Kami</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Jln. Veteran No.16 Kota Parepare</p>
+                <p><i class="fas fa-phone"></i> 0811428227-0811415227</p>
+                <p><i class="fas fa-envelope"></i> https://disdukcapil.pareparekota.go.id/</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Link Cepat</h3>
+                <ul>
+                    <li><a href="index.php">Home</a></li>
+                    <li><a href="buat_pengaduan.php">Buat Pengaduan</a></li>
+                    <li><a href="auth/login.php">Login Admin</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Jam Layanan</h3>
+                <p>Senin - Kamis: 08.00 - 16.00</p>
+                <p>Jumat: 08.00 - 16.30</p>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Disdukcapil Parepare. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Menu Toggle
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navMenu = document.getElementById('nav-menu');
+
+        mobileMenu.addEventListener('click', function() {
+            mobileMenu.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-menu a').forEach(n => n.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+            navMenu.classList.remove('active');
+        }));
+
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const requiredFields = this.querySelectorAll('[required]');
+            let valid = true;
+
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    valid = false;
+                    field.style.borderColor = 'red';
+                } else {
+                    field.style.borderColor = '';
+                }
+            });
+
+            if (!valid) {
+                e.preventDefault();
+                alert('Harap lengkapi semua field yang wajib diisi!');
+            }
+        });
+
+        // Function to show additional form based on selected jenis pengaduan
+        function showAdditionalForm() {
+            const jenis = document.getElementById('jenis_pengaduan').value;
+            const container = document.getElementById('additionalFormContainer');
+            
+            let html = '';
+            
+            switch(jenis) {
+                case 'AKTA KEMATIAN':
+                    html = `
+                        <div class="form-section additional-form" id="aktaKematianForm">
+                            <div class="section-title">
+                                <h5 class="mb-0"><i class="fas fa-file-contract me-2"></i>Formulir Akta Kematian</h5>
+                            </div>
+                            
+                            <!-- Data Pelapor -->
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">A. DATA PELAPOR</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Nama</label>
+                                        <input type="text" name="nama_pelapor_akta" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">NIK</label>
+                                        <input type="text" name="nik_pelapor" class="form-control" maxlength="16" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Nomor Dokumen Perjalanan</label>
+                                        <input type="text" name="no_dokper_pelapor" class="form-control">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Nomor Kartu Keluarga</label>
+                                        <input type="text" name="no_kk_pelapor" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label required">Kewarganegaraan</label>
+                                    <input type="text" name="kewarganegaraan_pelapor" class="form-control" value="Indonesia" required>
+                                </div>
+                            </div>
+
+                            <!-- Data Saksi I -->
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">DATA SAKSI I</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Nama</label>
+                                        <input type="text" name="nama_saksi1" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">NIK</label>
+                                        <input type="text" name="nik_saksi1" class="form-control" maxlength="16" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Nomor Kartu Keluarga</label>
+                                        <input type="text" name="no_kk_saksi1" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Kewarganegaraan</label>
+                                        <input type="text" name="kewarganegaraan_saksi1" class="form-control" value="Indonesia" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Data Saksi II -->
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">DATA SAKSI II</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Nama</label>
+                                        <input type="text" name="nama_saksi2" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">NIK</label>
+                                        <input type="text" name="nik_saksi2" class="form-control" maxlength="16" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Nomor Kartu Keluarga</label>
+                                        <input type="text" name="no_kk_saksi2" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Kewarganegaraan</label>
+                                        <input type="text" name="kewarganegaraan_saksi2" class="form-control" value="Indonesia" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Data Orang Tua -->
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">DATA ORANG TUA</h6>
+                                <h6 class="border-bottom pb-2">Ayah</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Nama Ayah</label>
+                                        <input type="text" name="nama_ayah" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">NIK Ayah</label>
+                                        <input type="text" name="nik_ayah" class="form-control" maxlength="16" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Tempat Lahir Ayah</label>
+                                        <input type="text" name="tempat_lahir_ayah" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Tanggal Lahir Ayah</label>
+                                        <input type="date" name="tanggal_lahir_ayah" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label required">Kewarganegaraan Ayah</label>
+                                    <input type="text" name="kewarganegaraan_ayah" class="form-control" value="Indonesia" required>
+                                </div>
+                                
+                                <h6 class="border-bottom pb-2 mt-4">Ibu</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Nama Ibu</label>
+                                        <input type="text" name="nama_ibu" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">NIK Ibu</label>
+                                        <input type="text" name="nik_ibu" class="form-control" maxlength="16" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Tempat Lahir Ibu</label>
+                                        <input type="text" name="tempat_lahir_ibu" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Tanggal Lahir Ibu</label>
+                                        <input type="date" name="tanggal_lahir_ibu" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label required">Kewarganegaraan Ibu</label>
+                                    <input type="text" name="kewarganegaraan_ibu" class="form-control" value="Indonesia" required>
+                                </div>
+                            </div                            <!-- Data Kematian -->
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">KEMATIAN</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">NIK Alm</label>
+                                        <input type="text" name="nik_alm" class="form-control" maxlength="16" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Nama Lengkap Alm</label>
+                                        <input type="text" name="nama_alm" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Tanggal Kematian</label>
+                                        <input type="date" name="tanggal_kematian" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Pukul</label>
+                                        <input type="time" name="pukul_kematian" class="form-control" required>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label required">Sebab Kematian</label>
+                                    <select name="sebab_kematian" class="form-select" required>
+                                        <option value="">Pilih</option>
+                                        <option value="sakit_biasa">Sakit Biasa</option>
+                                        <option value="wabah_penyakit">Wabah Penyakit</option>
+                                        <option value="kecelakaan">Kecelakaan</option>
+                                        <option value="kriminalitas">Kriminalitas</option>
+                                        <option value="bunuh_diri">Bunuh Diri</option>
+                                        <option value="lainnya">Lainnya</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label required">Tempat Kematian</label>
+                                    <input type="text" name="tempat_kematian" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label required">Yang Menerangkan</label>
+                                    <select name="yang_menerangkan" class="form-select" required>
+                                        <option value="">Pilih</option>
+                                        <option value="dokter">Dokter</option>
+                                        <option value="tenaga_kesehatan">Tenaga Kesehatan</option>
+                                        <option value="polisi">Polisi</option>
+                                        <option value="lainnya">Lainnya</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Lampiran untuk Akta Kematian -->
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">LAMPIRAN DOKUMEN</h6>
+                                <div class="mb-3">
+                                    <label class="form-label required">Upload File Pendukung</label>
+                                    <input type="file" name="lampiran" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
+                                    <small class="text-muted">Format: PDF, JPG, PNG (Maks. 2MB)</small>
+                                </div>
+                                <div class="alert alert-info">
+                                    <small>
+                                        <strong>Dokumen yang harus diupload:</strong><br>
+                                        • Surat Keterangan Kematian dari Kelurahan atau rumah sakit<br>
+                                        • Foto Kartu Keluarga (KK)<br>
+                                        • KTP asli yang meninggal dunia<br>
+                                        • Dokumen pendukung lainnya (jika ada)
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'AKTA LAHIR':
+                    html = `
+                        <div class="form-section additional-form" id="aktaLahirForm">
+                            <div class="section-title">
+                                <h5 class="mb-0"><i class="fas fa-baby me-2"></i>Formulir Akta Lahir</h5>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Nama Bayi</label>
+                                    <input type="text" name="nama_bayi" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Jenis Kelamin</label>
+                                    <select name="jenis_kelamin_bayi" class="form-select" required>
+                                        <option value="">Pilih</option>
+                                        <option value="L">Laki-laki</option>
+                                        <option value="P">Perempuan</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">Tempat Lahir</label>
+                                    <input type="text" name="tempat_lahir_bayi" class="form-control" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">Tanggal Lahir</label>
+                                    <input type="date" name="tanggal_lahir_bayi" class="form-control" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">Waktu Lahir</label>
+                                    <input type="time" name="waktu_lahir_bayi" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Berat Bayi (kg)</label>
+                                    <input type="number" step="0.1" name="berat_bayi" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Panjang Bayi (cm)</label>
+                                    <input type="number" name="panjang_bayi" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Anak Ke</label>
+                                    <input type="number" name="anak_ke" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Nama Ayah</label>
+                                    <input type="text" name="nama_ayah_aktalahir" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">NIK Ayah</label>
+                                    <input type="text" name="nik_ayah_aktalahir" class="form-control" maxlength="16" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Nama Ibu</label>
+                                    <input type="text" name="nama_ibu_aktalahir" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">NIK Ibu</label>
+                                    <input type="text" name="nik_ibu_aktalahir" class="form-control" maxlength="16" required>
+                                </div>
+                            </div>
+                            
+                            
+                            <!-- Data Saksi I -->
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">DATA SAKSI I</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Nama</label>
+                                        <input type="text" name="nama_saksi1" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">NIK</label>
+                                        <input type="text" name="nik_saksi1" class="form-control" maxlength="16" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Nomor Kartu Keluarga</label>
+                                        <input type="text" name="no_kk_saksi1" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Kewarganegaraan</label>
+                                        <input type="text" name="kewarganegaraan_saksi1" class="form-control" value="Indonesia" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Data Saksi II -->
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">DATA SAKSI II</h6>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Nama</label>
+                                        <input type="text" name="nama_saksi2" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">NIK</label>
+                                        <input type="text" name="nik_saksi2" class="form-control" maxlength="16" required>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Nomor Kartu Keluarga</label>
+                                        <input type="text" name="no_kk_saksi2" class="form-control" required>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label required">Kewarganegaraan</label>
+                                        <input type="text" name="kewarganegaraan_saksi2" class="form-control" value="Indonesia" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Lampiran untuk Akta Lahir -->
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">LAMPIRAN DOKUMEN</h6>
+                                <div class="mb-3">
+                                    <label class="form-label required">Upload File Pendukung</label>
+                                    <input type="file" name="lampiran" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
+                                    <small class="text-muted">Format: PDF, JPG, PNG (Maks. 2MB)</small>
+                                </div>
+                                <div class="alert alert-info">
+                                    <small>
+                                        <strong>Dokumen yang harus diupload:</strong><br>
+                                        • Surat keterangan lahir dari rumah sakit/bidan/kelurahan<br>
+                                        • Fotokopi kartu keluarga<br>
+                                        • Fotokopi KTP orang tua<br>
+                                        • Fotokopi buku nikah orang tua<br>
+                                        • foto KTP saksi 2 orang
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'KARTU TANDA PENGENAL':
+                    html = `
+                        <div class="form-section additional-form" id="ktpForm">
+                            <div class="section-title">
+                                <h5 class="mb-0"><i class="fas fa-id-card me-2"></i>Formulir Kartu Tanda Pengenal</h5>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Tempat Lahir</label>
+                                    <input type="text" name="tempat_lahir" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Tanggal Lahir</label>
+                                    <input type="date" name="tanggal_lahir" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Jenis Kelamin</label>
+                                    <select name="jenis_kelamin" class="form-select" required>
+                                        <option value="">Pilih</option>
+                                        <option value="L">Laki-laki</option>
+                                        <option value="P">Perempuan</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Agama</label>
+                                    <select name="agama" class="form-select" required>
+                                        <option value="">Pilih</option>
+                                        <option value="Islam">Islam</option>
+                                        <option value="Kristen">Kristen</option>
+                                        <option value="Katolik">Katolik</option>
+                                        <option value="Hindu">Hindu</option>
+                                        <option value="Buddha">Buddha</option>
+                                        <option value="Konghucu">Konghucu</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Status Perkawinan</label>
+                                    <select name="status_perkawinan" class="form-select" required>
+                                        <option value="">Pilih</option>
+                                        <option value="Belum Kawin">Belum Kawin</option>
+                                        <option value="Kawin">Kawin</option>
+                                        <option value="Cerai Hidup">Cerai Hidup</option>
+                                        <option value="Cerai Mati">Cerai Mati</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Pekerjaan</label>
+                                    <input type="text" name="pekerjaan" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label required">Alamat Sekarang</label>
+                                <textarea name="alamat_sekarang" class="form-control" rows="3" required></textarea>
+                            </div>
+                            
+                            <!-- Lampiran untuk KTP -->
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">LAMPIRAN DOKUMEN</h6>
+                                <div class="mb-3">
+                                    <label class="form-label required">Upload File Pendukung</label>
+                                    <input type="file" name="lampiran" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
+                                    <small class="text-muted">Format: PDF, JPG, PNG (Maks. 2MB)</small>
+                                </div>
+                                <div class="alert alert-info">
+                                    <small>
+                                        <strong>Dokumen yang harus diupload:</strong><br>
+                                        • Fotokopi Kartu Keluarga (KK)<br>
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'KARTU KELUARGA':
+                    html = `
+                        <div class="form-section additional-form" id="kkForm">
+                            <div class="section-title">
+                                <h5 class="mb-0"><i class="fas fa-users me-2"></i>Formulir Kartu Keluarga</h5>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label required">Alamat Keluarga</label>
+                                <textarea name="alamat_keluarga" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">RT/RW</label>
+                                    <input type="text" name="rt_rw" class="form-control" placeholder="001/002" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">Kelurahan/Desa</label>
+                                    <input type="text" name="kelurahan_desa" class="form-control" required>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label class="form-label required">Kecamatan</label>
+                                    <input type="text" name="kecamatan" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label required">Kode Pos</label>
+                                <input type="text" name="kode_pos" class="form-control" maxlength="5" required>
+                            </div>
+                            
+                            <!-- Lampiran untuk KK -->
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">LAMPIRAN DOKUMEN</h6>
+                                <div class="mb-3">
+                                    <label class="form-label required">Upload File Pendukung</label>
+                                    <input type="file" name="lampiran" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
+                                    <small class="text-muted">Format: PDF, JPG, PNG (Maks. 2MB)</small>
+                                </div>
+                                <div class="alert alert-info">
+                                    <small>
+                                        <strong>Dokumen yang harus diupload:</strong><br>
+                                        • Fotokopi dokumen pendukung (akta, KTP, surat nikah)<br>
+                                        • KK lama (bagi yang melakukan perubahan data)<br>
+                                        • Surat pengantar dari kelurahan
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'SURAT KETERANGAN PINDAH WARGA NEGARA INDONESIA':
+                    html = `
+                        <div class="form-section additional-form" id="pindahForm">
+                            <div class="section-title">
+                                <h5 class="mb-0"><i class="fas fa-exchange-alt me-2"></i>Formulir Surat Keterangan Pindah</h5>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label required">Alamat Tujuan</label>
+                                <textarea name="alamat_tujuan" class="form-control" rows="3" required></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label required">Alasan Pindah</label>
+                                <select name="alasan_pindah" class="form-select" required>
+                                    <option value="">Pilih</option>
+                                    <option value="pekerjaan">Pekerjaan</option>
+                                    <option value="pendidikan">Pendidikan</option>
+                                    <option value="keluarga">Keluarga</option>
+                                    <option value="lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Jumlah Keluarga yang Pindah</label>
+                                    <input type="number" name="jumlah_keluarga_pindah" class="form-control" min="1" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Tanggal Pindah</label>
+                                    <input type="date" name="tanggal_pindah" class="form-control" required>
+                                </div>
+                            </div>
+                            
+                            <!-- Lampiran untuk Surat Pindah -->
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">LAMPIRAN DOKUMEN</h6>
+                                <div class="mb-3">
+                                    <label class="form-label required">Upload File Pendukung</label>
+                                    <input type="file" name="lampiran" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
+                                    <small class="text-muted">Format: PDF, JPG, PNG (Maks. 2MB)</small>
+                                </div>
+                                <div class="alert alert-info">
+                                    <small>
+                                        <strong>Dokumen yang harus diupload:</strong><br>
+                                        • Fotokopi KK dan KTP pemohon<br>
+                                        • Surat pengantar pindah dari daerah asal<br>
+                                        • Alamat lengkap <br>
+                                     <b>  • keterangan KTP elektonik di stor alamat tujuan /stud   </b>                                     • Surat keterangan kerja/studi (jika ada)
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'KARTU IDENTITAS ANAK':
+                    html = `
+                        <div class="form-section additional-form" id="kiaForm">
+                            <div class="section-title">
+                                <h5 class="mb-0"><i class="fas fa-child me-2"></i>Formulir Kartu Identitas Anak</h5>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Nama Anak</label>
+                                    <input type="text" name="nama_anak" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Jenis Kelamin</label>
+                                    <select name="jenis_kelamin_anak" class="form-select" required>
+                                        <option value="">Pilih</option>
+                                        <option value="L">Laki-laki</option>
+                                        <option value="P">Perempuan</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Tempat Lahir</label>
+                                    <input type="text" name="tempat_lahir_anak" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Tanggal Lahir</label>
+                                    <input type="date" name="tanggal_lahir_anak" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Nama Ayah</label>
+                                    <input type="text" name="nama_ayah_kia" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">NIK Ayah</label>
+                                    <input type="text" name="nik_ayah_kia" class="form-control" maxlength="16" required>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">Nama Ibu</label>
+                                    <input type="text" name="nama_ibu_kia" class="form-control" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label required">NIK Ibu</label>
+                                    <input type="text" name="nik_ibu_kia" class="form-control" maxlength="16" required>
+                                </div>
+                            </div>
+                            
+                            <!-- Lampiran untuk KIA -->
+                            <div class="mb-4">
+                                <h6 class="border-bottom pb-2">LAMPIRAN DOKUMEN</h6>
+                                <div class="mb-3">
+                                    <label class="form-label required">Upload File Pendukung</label>
+                                    <input type="file" name="lampiran" class="form-control" accept=".pdf,.jpg,.jpeg,.png" required>
+                                    <small class="text-muted">Format: PDF, JPG, PNG (Maks. 2MB)</small>
+                                </div>
+                                <div class="alert alert-info">
+                                    <small>
+                                        <strong>Dokumen yang harus diupload:</strong><br>
+                                        • Fotokopi Akta Kelahiran Anak<br>
+                                        • Fotokopi KK dan KTP orang tua<br>
+                                        • Pas foto anak ukuran 2x3 (2 lembar) untuk umur diatas 5 tahun
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                default:
+                    html = '';
+                    break;
+            }
+            
+            container.innerHTML = html;
+            
+            // Show the form with animation
+            const additionalForm = container.querySelector('.additional-form');
+            if (additionalForm) {
+                additionalForm.style.display = 'block';
+            }
+        }
+
+        // Inisialisasi form saat halaman dimuat
+        document.addEventListener('DOMContentLoaded', function() {
+            showAdditionalForm();
+        });
+    </script>
+</body>
+</html>
+<?php mysqli_close($conn); ?>

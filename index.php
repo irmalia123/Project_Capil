@@ -21,15 +21,14 @@ if ($conn->connect_error) {
 function redirect_if_not_logged_in() {
     // Tidak melakukan redirect untuk halaman public
 }
-?>
 
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Pengaduan Masyarakat - Dispendukcapil Bangkalan</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <title>Website Pengaduan Masyarakat - Disdukcapil Parepare</title>
     <style>
         /* Reset CSS */
         * {
@@ -108,6 +107,21 @@ function redirect_if_not_logged_in() {
 
         .nav-menu a.active {
             background-color: var(--accent-color);
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 4px;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--white);
+            transition: var(--transition);
         }
 
         /* Slider Styles */
@@ -434,44 +448,199 @@ function redirect_if_not_logged_in() {
             border-top: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-                gap: 1rem;
-            }
+        /* TATA CARA PENGADUAN */
+        .steps-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 25px;
+            margin-top: 40px;
+        }
 
-            .nav-menu {
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 1rem;
-            }
+        .step {
+            background-color: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            width: 280px;
+            text-align: center;
+            transition: 0.3s ease;
+        }
 
-            .slider {
-                height: 60vh;
-            }
+        .step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+        }
 
-            .slide h1 {
-                font-size: 2.5rem;
-            }
+        .step img {
+            width: 70px;
+            height: 70px;
+            background-color: #fff9e6;
+            padding: 12px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
 
-            .slide p {
-                font-size: 1.1rem;
-            }
+        .step h3 {
+            font-size: 16px;
+            color: #e67e22;
+            margin-bottom: 8px;
+        }
 
-            .slider-arrow {
-                width: 40px;
-                height: 40px;
-                font-size: 1.2rem;
-            }
+        .step p {
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
 
-            .slider-arrow.prev {
-                left: 1rem;
-            }
+        .note {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
 
-            .slider-arrow.next {
-                right: 1rem;
-            }
+        
+        /* Login Form Styles */
+        .login-section {
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            padding: 60px 20px;
+            margin: 4rem 0;
+            border-radius: 15px;
+            color: var(--white);
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: var(--white);
+            padding: 2.5rem;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .login-title {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .login-subtitle {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+            color: #666;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .login-btn {
+            width: 100%;
+            background-color: var(--accent-color);
+            color: var(--white);
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-bottom: 1rem;
+        }
+
+        .login-btn:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .login-links {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .login-links a {
+            color: var(--secondary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .login-links a:hover {
+            color: var(--primary-color);
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .action-btn {
+            background: var(--white);
+            padding: 1.5rem;
+            text-align: center;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-color);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .action-btn:hover {
+            border-color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        .action-btn i {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+
+        .btn-container {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 10px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
         }
 
         /* Quick Actions */
@@ -525,6 +694,160 @@ function redirect_if_not_logged_in() {
             color: #721c24;
             border: 1px solid #f5c6cb;
         }
+
+        /* ========== MEDIA QUERIES ========== */
+        
+        /* Tablet */
+        @media (max-width: 1024px) {
+            .slide h1 {
+                font-size: 2.8rem;
+            }
+            
+            .slide p {
+                font-size: 1.2rem;
+            }
+            
+            .features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .nav-container {
+                flex-direction: row;
+                justify-content: space-between;
+                padding: 0 1rem;
+            }
+
+            .menu-toggle {
+                display: flex;
+            }
+
+            .nav-menu {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                flex-direction: column;
+                background-color: var(--primary-color);
+                width: 100%;
+                text-align: center;
+                transition: var(--transition);
+                box-shadow: 0 10px 27px rgba(0,0,0,0.05);
+                padding: 2rem 0;
+                gap: 0;
+            }
+
+            .nav-menu.active {
+                left: 0;
+            }
+
+            .nav-menu li {
+                margin: 15px 0;
+            }
+
+            .slider {
+                height: 60vh;
+            }
+
+            .slide h1 {
+                font-size: 2rem;
+            }
+
+            .slide p {
+                font-size: 1rem;
+            }
+
+            .cta-button {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+            }
+
+            .slider-arrow {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .slider-arrow.prev {
+                left: 1rem;
+            }
+
+            .slider-arrow.next {
+                right: 1rem;
+            }
+
+            .main-content {
+                padding: 0 1rem;
+            }
+
+            .section-title h2 {
+                font-size: 2rem;
+            }
+
+            .features {
+                grid-template-columns: 1fr;
+            }
+
+            .pengaduan-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .steps-container {
+                gap: 15px;
+            }
+
+            .step {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        /* Small Mobile */
+        @media (max-width: 480px) {
+            .logo span {
+                font-size: 1.2rem;
+            }
+
+            .slider {
+                height: 50vh;
+            }
+
+            .slide h1 {
+                font-size: 1.8rem;
+            }
+
+            .slide p {
+                font-size: 0.9rem;
+            }
+
+            .cta-button {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.9rem;
+            }
+
+            .section-title h2 {
+                font-size: 1.8rem;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+
+            .step {
+                padding: 20px;
+            }
+
+            .step img {
+                width: 60px;
+                height: 60px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -532,20 +855,22 @@ function redirect_if_not_logged_in() {
     <header class="header">
         <div class="nav-container">
             <div class="logo">
+                <img src="img/logopare.png" width="50">
                 <i class="fas fa-landmark"></i>
-                <span>DISPENDUKCAPIL BANGKALAN</span>
+                <span>DISDUKCAPIL Parepare</span>
             </div>
+            
+            <div class="menu-toggle" id="mobile-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
             <nav>
-                <ul class="nav-menu">
+                <ul class="nav-menu" id="nav-menu">
                     <li><a href="index.php" class="active">HOME</a></li>
-                    <li><a href="lapor.php">LAPOR</a></li>
-                    <li><a href="pengaduan.php">LIHAT PENGADUAN</a></li>
-                    <li><a href="cara.php">CARA</a></li>
-                    <li><a href="profil.php">PROFIL DINAS</a></li>
-                    <li><a href="faq.php">FAQ</a></li>
-                    <li><a href="bantuan.php">BANTUAN</a></li>
-                    <li><a href="kontak.php">KONTAK</a></li>
-                    <li><a href="auth/login.php">login</a></li>
+                    <li><a href="buat_pengaduan.php" >BUAT PENGADUAN</a></li>
+                    <li><a href="auth/login.php">LOGIN ADMIN</a></li>
                 </ul>
             </nav>
         </div>
@@ -559,8 +884,8 @@ function redirect_if_not_logged_in() {
                 <div class="slide-bg"></div>
                 <div class="slide-content">
                     <h1>Selamat Datang</h1>
-                    <p>Website Pengaduan Masyarakat Dispendukcapil Bangkalan</p>
-                    <a href="lapor.php" class="cta-button">
+                    <p>Website Pengaduan Masyarakat Disdukcapil Parepare</p>
+                    <a href="auth/login.php" class="cta-button">
                         <i class="fas fa-bullhorn"></i> Ajukan Pengaduan
                     </a>
                 </div>
@@ -606,158 +931,140 @@ function redirect_if_not_logged_in() {
         </div>
     </section>
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <!-- Database Status -->
-        <?php if ($database_connected): ?>
-            <div class="db-status connected">
-                <i class="fas fa-check-circle"></i> Terhubung ke Database: siak_parepare
-            </div>
-        <?php else: ?>
-            <div class="db-status error">
-                <i class="fas fa-exclamation-triangle"></i> Gagal terhubung ke database: <?php echo $database_error; ?>
-            </div>
-        <?php endif; ?>
-
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <a href="lapor.php" class="action-btn">
-                <i class="fas fa-edit"></i>
-                <div>Buat Pengaduan</div>
-            </a>
-            <a href="pengaduan.php" class="action-btn">
-                <i class="fas fa-search"></i>
-                <div>Lacak Pengaduan</div>
-            </a>
-            <a href="cara.php" class="action-btn">
-                <i class="fas fa-info-circle"></i>
-                <div>Panduan</div>
-            </a>
-            <a href="faq.php" class="action-btn">
-                <i class="fas fa-question-circle"></i>
-                <div>FAQ</div>
-            </a>
+    <!-- TATA CARA MELAKUKAN PENGADUAN -->
+    <section id="tatacara-pengaduan" style="background-color: #fffef6; padding: 50px 20px;">
+        <div class="section-title" style="text-align: center;">
+            <h2 style="color: #333;">Tata Cara Melakukan Pengaduan</h2>
+            <p style="color: #555;">Berikut langkah-langkah yang harus dilakukan masyarakat untuk menyampaikan pengaduan kepada Disdukcapil Parepare secara Online</p>
         </div>
 
-        <!-- PENGADUAN TERBARU -->
-        <section>
-            <div class="section-title">
-                <h2>Pengaduan Terbaru</h2>
-                <p>Berikut adalah beberapa pengaduan terbaru dari masyarakat</p>
+        <div class="steps-container">
+            <div class="step">
+                <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Persiapkan Dokumen" />
+                <h3>Persiapkan Dokumen Pendukung</h3>
             </div>
 
-            <div class="pengaduan-grid">
-                <?php
-                // Data dummy untuk pengaduan
-                $dummy_pengaduan = [
-                    [
-                        'judul' => 'Permohonan Perbaikan Data KTP',
-                        'deskripsi' => 'Terdapat kesalahan pada tempat lahir di KTP elektronik saya yang perlu diperbaiki segera.',
-                        'status' => 'diproses',
-                        'tanggal_dibuat' => date('Y-m-d H:i:s', strtotime('-2 days'))
-                    ],
-                    [
-                        'judul' => 'Pengajuan Kartu Keluarga Baru',
-                        'deskripsi' => 'Mengajukan pembuatan KK baru karena telah menikah dan memisahkan diri dari orang tua.',
-                        'status' => 'selesai',
-                        'tanggal_dibuat' => date('Y-m-d H:i:s', strtotime('-5 days'))
-                    ],
-                    [
-                        'judul' => 'Layanan Akta Kelahiran Anak',
-                        'deskripsi' => 'Proses pembuatan akta kelahiran untuk anak pertama yang baru lahir bulan lalu.',
-                        'status' => 'baru',
-                        'tanggal_dibuat' => date('Y-m-d H:i:s', strtotime('-1 day'))
-                    ],
-                    [
-                        'judul' => 'Perubahan Alamat di KTP',
-                        'deskripsi' => 'Mengajukan perubahan alamat pada KTP karena telah pindah domisili.',
-                        'status' => 'diproses',
-                        'tanggal_dibuat' => date('Y-m-d H:i:s', strtotime('-3 days'))
-                    ],
-                    [
-                        'judul' => 'Pencatatan Akta Kematian',
-                        'deskripsi' => 'Proses pencatatan akta kematian untuk anggota keluarga yang telah meninggal.',
-                        'status' => 'selesai',
-                        'tanggal_dibuat' => date('Y-m-d H:i:s', strtotime('-7 days'))
-                    ],
-                    [
-                        'judul' => 'Pengaduan Antrian Berlebihan',
-                        'deskripsi' => 'Keluhan mengenai antrian yang sangat panjang di loket pelayanan KTP.',
-                        'status' => 'baru',
-                        'tanggal_dibuat' => date('Y-m-d H:i:s')
-                    ]
-                ];
-
-                // Tampilkan data dummy
-                foreach ($dummy_pengaduan as $pengaduan) {
-                    $status_class = '';
-                    switch ($pengaduan['status']) {
-                        case 'diproses':
-                            $status_class = 'process';
-                            break;
-                        case 'selesai':
-                            $status_class = 'done';
-                            break;
-                        default:
-                            $status_class = 'new';
-                    }
-                    
-                    echo "
-                    <div class='pengaduan-card'>
-                        <h3>" . htmlspecialchars($pengaduan['judul']) . "</h3>
-                        <div class='date'>
-                            <i class='far fa-calendar'></i> " . date('d M Y', strtotime($pengaduan['tanggal_dibuat'])) . "
-                        </div>
-                        <p>" . substr(htmlspecialchars($pengaduan['deskripsi']), 0, 100) . "...</p>
-                        <div class='status {$status_class}'>
-                            " . ucfirst($pengaduan['status']) . "
-                        </div>
-                    </div>";
-                }
-                ?>
-            </div>
-        </section>
-
-        <!-- FITUR LAYANAN -->
-        <section>
-            <div class="section-title">
-                <h2>Layanan Kami</h2>
-                <p>Berbagai layanan yang tersedia di Dispendukcapil Bangkalan</p>
+            <div class="step">
+                <img src="https://cdn-icons-png.flaticon.com/512/1828/1828919.png" alt="Isi Formulir" />
+                <h3>Isi Formulir Pengaduan</h3>
             </div>
 
-            <div class="features">
-                <div class="feature-card">
-                    <i class="fas fa-id-card"></i>
-                    <h3>KTP Elektronik</h3>
-                    <p>Pelayanan pembuatan dan perpanjangan KTP Elektronik</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-users"></i>
-                    <h3>Kartu Keluarga</h3>
-                    <p>Penerbitan dan perubahan Kartu Keluarga</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-baby"></i>
-                    <h3>Akta Kelahiran</h3>
-                    <p>Pencatatan dan penerbitan Akta Kelahiran</p>
-                </div>
-                <div class="feature-card">
-                    <i class="fas fa-book"></i>
-                    <h3>Akta Kematian</h3>
-                    <p>Pencatatan dan penerbitan Akta Kematian</p>
-                </div>
+            <div class="step">
+                <img src="https://cdn-icons-png.flaticon.com/512/2331/2331949.png" alt="Sampaikan Pengaduan" />
+                <h3>Sampaikan Pengaduan</h3>
             </div>
-        </section>
-    </main>
+
+            <div class="step">
+                <img src="https://cdn-icons-png.flaticon.com/512/1048/1048948.png" alt="Verifikasi" />
+                <h3>Verifikasi dan Pencatatan</h3>
+            </div>
+
+            <div class="step">
+                <img src="https://cdn-icons-png.flaticon.com/512/483/483361.png" alt="Tindak Lanjut" />
+                <h3>Proses Tindak Lanjut</h3>
+            </div>
+
+            <div class="step">
+                <img src="https://cdn-icons-png.flaticon.com/512/845/845646.png" alt="Hasil Pengaduan" />
+                <h3 style="color: #2e9e3b;">6. Informasi Hasil Pengaduan</h3>
+            </div>
+        </div>
+
+        <div class="note">
+            <p><strong>Catatan:</strong> Pengaduan tanpa identitas dan bukti pendukung yang jelas tidak dapat diproses untuk menjaga keabsahan laporan.</p>
+        </div>
+       
+
+    <!-- FITUR LAYANAN -->
+    <section>
+        <div class="section-title">
+            <h2>Layanan Kami</h2>
+            <p>Berbagai layanan yang tersedia di Disdukcapil Parepare</p>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <i class="fas fa-id-card"></i>
+                <h3>KTP Elektronik</h3>
+                <p>Pelayanan pembuatan dan perpanjangan KTP Elektronik</p>
+                <h4>Persyaratan:</h4>
+                <ul style="text-align: left; margin-left: 20px;">
+                    <li>Fotokopi Kartu Keluarga (KK)</li>
+                    <li>Telah berusia 17 tahun atau sudah menikah</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <i class="fas fa-users"></i>
+                <h3>Kartu Keluarga</h3>
+                <p>Penerbitan dan perubahan Kartu Keluarga</p>
+                <h4>Persyaratan:</h4>
+                <ul style="text-align: left; margin-left: 20px;">
+                    <li>Fotokopi dokumen pendukung (akta, KTP, surat nikah, dsb.)</li>
+                    <li>KK lama (bagi yang melakukan perubahan data)</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <i class="fas fa-baby"></i>
+                <h3>Akta Kelahiran</h3>
+                <p>Pencatatan dan penerbitan Akta Kelahiran</p>
+                <h4>Persyaratan:</h4>
+                <ul style="text-align: left; margin-left: 20px;">
+                    <li>Surat keterangan lahir dari rumah sakit/bidan/kelurahan</li>
+                    <li>Fotokopi KK dan KTP orang tua</li>
+                    <li>Fotokopi buku nikah/akta perkawinan orang tua</li>
+                    <li>Formulir permohonan akta kelahiran</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <i class="fas fa-book"></i>
+                <h3>Akta Kematian</h3>
+                <p>Pencatatan dan penerbitan Akta Kematian</p>
+                <h4>Persyaratan:</h4>
+                <ul style="text-align: left; margin-left: 20px;">
+                    <li>Surat keterangan kematian dari kelurahan atau rumah sakit</li>
+                    <li>Kartu Keluarga (KK)</li>
+                    <li>KTP asli yang meninggal dunia</li>
+                    <li>Mengisi formulir permohonan akta kematian</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <i class="fas fa-child"></i>
+                <h3>Kartu Identitas Anak (KIA)</h3>
+                <p>Pembuatan Kartu Identitas Anak bagi warga usia di bawah 17 tahun.</p>
+                <h4>Persyaratan:</h4>
+                <ul style="text-align: left; margin-left: 20px;">
+                    <li>Fotokopi Akta Kelahiran Anak</li>
+                    <li>Fotokopi KK dan KTP orang tua</li>
+                    <li>Pas foto anak ukuran 2x3 (2 lembar)</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <i class="fas fa-exchange-alt"></i>
+                <h3>SKPWNI (Pindah Keluar / Pindah Masuk)</h3>
+                <p>Pelayanan penerbitan Surat Keterangan Pindah WNI untuk penduduk yang berpindah domisili.</p>
+                <h4>Persyaratan:</h4>
+                <ul style="text-align: left; margin-left: 20px;">
+                    <li>Fotokopi KK dan KTP pemohon</li>
+                    <li>Surat pengantar pindah dari daerah asal</li>
+                    <li>Alamat lengkap</li>
+                </ul>
+            </div>
+        </div>
+    </section>
 
     <!-- FOOTER -->
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
                 <h3>Kontak Kami</h3>
-                <p><i class="fas fa-map-marker-alt"></i> Jl. Raya Bangkalan No. 123</p>
-                <p><i class="fas fa-phone"></i> (031) 1234567</p>
-                <p><i class="fas fa-envelope"></i> info@dispendukcapil-bangkalan.go.id</p>
+                <p><i class="fas fa-map-marker-alt"></i> Jln. Veteran No.16 Kota Parepare</p>
+                <p><i class="fas fa-phone"></i> 0811428227-0811415227</p>
+                <p><i class="fas fa-envelope"></i> https://disdukcapil.pareparekota.go.id/</p>
             </div>
             
             <div class="footer-section">
@@ -766,20 +1073,18 @@ function redirect_if_not_logged_in() {
                     <li><a href="index.php">Home</a></li>
                     <li><a href="lapor.php">Buat Pengaduan</a></li>
                     <li><a href="pengaduan.php">Lacak Pengaduan</a></li>
-                    <li><a href="faq.php">FAQ</a></li>
                 </ul>
             </div>
             
             <div class="footer-section">
                 <h3>Jam Layanan</h3>
-                <p>Senin - Kamis: 08.00 - 15.00</p>
-                <p>Jumat: 08.00 - 11.00</p>
-                <p>Sabtu: 08.00 - 13.00</p>
+                <p>Senin - Kamis: 08.00 - 16.00</p>
+                <p>Jumat        : 08.00 - 16.30</p>
             </div>
         </div>
         
         <div class="footer-bottom">
-            <p>&copy; 2024 Dispendukcapil Bangkalan. All rights reserved.</p>
+            <p>&copy;Disdukcapil Parepare</p>
         </div>
     </footer>
 
@@ -812,6 +1117,21 @@ function redirect_if_not_logged_in() {
         setInterval(() => {
             changeSlide(1);
         }, 5000);
+
+        // Mobile Menu Toggle
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navMenu = document.getElementById('nav-menu');
+
+        mobileMenu.addEventListener('click', function() {
+            mobileMenu.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-menu a').forEach(n => n.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+            navMenu.classList.remove('active');
+        }));
 
         // Smooth scroll untuk anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
