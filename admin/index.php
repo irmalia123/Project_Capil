@@ -289,8 +289,9 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
         <span class="menu-text">SIAK KOTA PAREPARE</span>
     </div>
     <a href="dashboard.php" class="menu-item active"><i class="fas fa-home"></i> Dashboard</a>
-    <a href="data_penduduk.php" class="menu-item"><i class="fas fa-users"></i> Data Penduduk</a>
-    <a href="dokumen.php" class="menu-item"><i class="fas fa-file-alt"></i> Form Pengajuan</a>
+    <a href="data_pengajuan.php" class="menu-item"><i class="fas fa-users"></i> Data Pengajuan</a>
+    <a href="notifikasi.php" class="menu-item"><i class="fas fa-users"></i> Notifikasi</a>
+    <a href="verifikasi_pengajuan.php" class="menu-item"><i class="fas fa-file-alt"></i> Verifikasi Pengajuan</a>
     <!-- Logout button -->
     <form action="../login.php" method="GET" style="margin-top: auto;">
         <button type="submit" name="action" value="logout" class="logout-btn">
