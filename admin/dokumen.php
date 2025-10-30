@@ -229,28 +229,27 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
     <div class="document-services">
         <a href="../documen/pencatatan_perkawinan.php" class="service-card">
             <i class="fas fa-heart"></i>
-            <h3>Pencatatan Perkawinan</h3>
-            <p>Layanan pencatatan resmi perkawinan untuk warga Kota Parepare.</p>
+            <h3>Kartu Tanda Penduduk</h3>
         </a>
         <a href="../documen/pencatatan_perceraian.php" class="service-card">
             <i class="fas fa-heart-broken"></i>
-            <h3>Pencatatan Perceraian</h3>
-            <p>Proses pencatatan perceraian yang sah dan terverifikasi.</p>
+            <h3>Kartu Keluarga</h3>
         </a>
         <a href="../documen/penerbitan_kk.php" class="service-card">
             <i class="fas fa-users"></i>
-            <h3>Penerbitan Kartu Keluarga</h3>
-            <p>Pembuatan dan pembaruan Kartu Keluarga dengan mudah.</p>
+            <h3>Akta Lahir</h3>
         </a>
         <a href="../documen/penerbitan_ktp.php" class="service-card">
             <i class="fas fa-id-card"></i>
-            <h3>Penerbitan KTP</h3>
-            <p>Layanan pembuatan KTP baru atau pembaruan data.</p>
+            <h3>Kartu Indonesia Pintar</h3>
         </a>
         <a href="../documen/akta_kelahiran.php" class="service-card">
             <i class="fas fa-baby"></i>
-            <h3>Kutipan Akta Kelahiran</h3>
-            <p>Penerbitan dokumen resmi untuk kelahiran penduduk.</p>
+            <h3>Akta Kematian</h3>
+        </a>
+        <a href="../documen/akta_kelahiran.php" class="service-card">
+            <i class="fas fa-baby"></i>
+            <h3>Surat Pindah Datang (SKPWNI)</h3>
         </a>
     </div>
 </main>

@@ -269,9 +269,10 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
         <i class="fas fa-city"></i>
         <span class="menu-text">SIAK KOTA PAREPARE</span>
     </div>
-    <a href="dashboard.php" class="menu-item active"><i class="fas fa-home"></i> Dashboard</a>
-    <a href="data_penduduk.php" class="menu-item"><i class="fas fa-users"></i> Data Penduduk</a>
-    <a href="dokumen.php" class="menu-item"><i class="fas fa-file-alt"></i> Form Pengajuan</a>
+    <a href="index.php" class="menu-item active"><i class="fas fa-home"></i> Dashboard</a>
+    <a href="notifikasi.php" class="menu-item"><i class="fas fa-users"></i> notifikasi</a>
+    <a href="data_pengajuan.php" class="menu-item"><i class="fas fa-file-alt"></i> Data Pengajuan</a>
+    <a href="verifikasi_pengajuan.php" class="menu-item"><i class="fas fa-file-alt"></i> Verifikasi Pengajuan</a>
     <!-- Logout button -->
     <form action="../login.php" method="GET" style="margin-top: auto;">
         <button type="submit" name="action" value="logout" class="logout-btn">
@@ -354,7 +355,7 @@ redirect_if_not_logged_in(); // Redirect pengguna jika tidak terautentikasi
         $perkawinan_data = mysqli_fetch_assoc($perkawinan_result);
         ?>
         <div class="stat-card">
-            <h3>Pencatatan Perkawinan</h3>
+            <h3>KTP</h3>
             <div class="number"><?php echo $perkawinan_data['total']; ?></div>
             <i class="fas fa-ring icon"></i>
         </div>
